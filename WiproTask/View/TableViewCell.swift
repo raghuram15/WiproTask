@@ -75,7 +75,7 @@ class TableViewCell: UITableViewCell {
         
         textView.isEditable = false
         textView.isScrollEnabled = false
-        textView.font = UIFont.systemFont(ofSize: 14)
+        textView.font = UIFont.systemFont(ofSize: 16)
         
         return textView
     }()
@@ -98,20 +98,19 @@ class TableViewCell: UITableViewCell {
     
     func setImageConstraints(){
            
-         refImageView.centerYAnchor.constraint(equalTo: baseView.centerYAnchor, constant:  15).isActive = true
+          refImageView.centerYAnchor.constraint(equalTo: baseView.centerYAnchor, constant:  10).isActive = true
           refImageView.leadingAnchor.constraint(equalTo: baseView.leadingAnchor, constant: 8).isActive = true
           refImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
           refImageView.widthAnchor.constraint(equalTo: refImageView.heightAnchor, multiplier: 16/9).isActive = true
        
-       
-       }
+    }
     
     func setTitleLabelCons(){
            
-           titleLabel.topAnchor.constraint(equalTo: baseView.topAnchor, constant : 5).isActive = true
-           titleLabel.leftAnchor.constraint(equalTo: baseView.leftAnchor, constant : 5).isActive = true
-           titleLabel.rightAnchor.constraint(equalTo: baseView.rightAnchor, constant: -5).isActive = true
-           titleLabel.centerXAnchor.constraint(equalTo: baseView.centerXAnchor, constant: 5).isActive = true
+        titleLabel.topAnchor.constraint(equalTo: baseView.topAnchor, constant : 5).isActive        = true
+        titleLabel.leftAnchor.constraint(equalTo: baseView.leftAnchor, constant : 5).isActive      = true
+        titleLabel.rightAnchor.constraint(equalTo: baseView.rightAnchor, constant: -5).isActive    = true
+        titleLabel.centerXAnchor.constraint(equalTo: baseView.centerXAnchor, constant: 5).isActive = true
        }
 
     func setDescCons() {

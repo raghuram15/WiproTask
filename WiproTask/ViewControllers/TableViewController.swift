@@ -33,13 +33,14 @@ class TableViewController: UITableViewController {
         refreshControl?.endRefreshing()
     }
     
+    
      func loadData(){
             
         tableView.register(TableViewCell.self, forCellReuseIdentifier: Constants.cellId)
             
         viewModel.fetchBreaches { [weak self]  data in
                 
-                DispatchQueue.main.async {
+               DispatchQueue.main.async {
                     switch data {
                     case .failure(let error):
                         print ("failure", error)
@@ -95,9 +96,8 @@ extension TableViewController {
 
         if let statusText = dataMdl.rows[indexPath.item].description {
             
-            let rect = NSString(string: statusText).boundingRect(with: CGSize(width: view.frame.width / 2, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 14)], context: nil)
-                print(rect.height, "heighttttt@#")
-                return rect.height + 120
+            let rect = NSString(string: statusText).boundingRect(with: CGSize(width: view.frame.width / 2, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 16)], context: nil)
+                return rect.height + 140
             
         }
         
