@@ -10,8 +10,9 @@ import UIKit
 
 class TableViewCell: UITableViewCell {
 
-    var imageCache = NSCache<AnyObject, AnyObject>()
+    
     var imageUrlString : String?
+    var viewModel = DataViewModel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -34,6 +35,8 @@ class TableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    
     // MARK : - Initialize Views
     var baseView : UIView = {
         
@@ -47,7 +50,7 @@ class TableViewCell: UITableViewCell {
     
     var refImageView : UIImageView = {
         let imageView = UIImageView()
-        //imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFit
         imageView.layer.masksToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -60,9 +63,9 @@ class TableViewCell: UITableViewCell {
         let label = UILabel()
         label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Hello EveryOne"
         label.font = UIFont.boldSystemFont(ofSize: 20)
-        label.textAlignment = .center
+        label.textAlignment = .left
+       
         return label
     }()
     
@@ -76,7 +79,8 @@ class TableViewCell: UITableViewCell {
         textView.isEditable = false
         textView.isScrollEnabled = false
         textView.font = UIFont.systemFont(ofSize: 16)
-        
+        textView.textAlignment = .left
+       
         return textView
     }()
 
@@ -85,7 +89,9 @@ class TableViewCell: UITableViewCell {
     func setBaseViewCons(){
         
         baseView.topAnchor.constraint(equalTo: topAnchor, constant: 10).isActive = true
-        baseView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10).isActive = true
+       let con = baseView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10)
+       con.priority = UILayoutPriority(999)
+       con.isActive = true
         baseView.leftAnchor.constraint(equalTo: leftAnchor, constant: 10).isActive = true
         baseView.rightAnchor.constraint(equalTo: rightAnchor, constant: -10).isActive = true
     }
@@ -98,30 +104,30 @@ class TableViewCell: UITableViewCell {
     
     func setImageConstraints(){
            
-          refImageView.centerYAnchor.constraint(equalTo: baseView.centerYAnchor, constant:  10).isActive = true
+        refImageView.topAnchor.constraint(equalTo: titleLabel.topAnchor, constant: 1).isActive = true
           refImageView.leadingAnchor.constraint(equalTo: baseView.leadingAnchor, constant: 8).isActive = true
-          refImageView.heightAnchor.constraint(equalToConstant: 100).isActive = true
+          refImageView.heightAnchor.constraint(equalToConstant: 110).isActive = true
           refImageView.widthAnchor.constraint(equalTo: refImageView.heightAnchor, multiplier: 16/9).isActive = true
        
     }
     
     func setTitleLabelCons(){
            
-        titleLabel.topAnchor.constraint(equalTo: baseView.topAnchor, constant : 5).isActive        = true
-        titleLabel.leftAnchor.constraint(equalTo: baseView.leftAnchor, constant : 5).isActive      = true
+        titleLabel.topAnchor.constraint(equalTo: baseView.topAnchor, constant : 12).isActive        = true
+        titleLabel.leftAnchor.constraint(equalTo:  refImageView.rightAnchor, constant : 5).isActive      = true
         titleLabel.rightAnchor.constraint(equalTo: baseView.rightAnchor, constant: -5).isActive    = true
-        titleLabel.centerXAnchor.constraint(equalTo: baseView.centerXAnchor, constant: 5).isActive = true
+       // titleLabel.centerXAnchor.constraint(equalTo: baseView.centerXAnchor, constant: 5).isActive = true
        }
 
     func setDescCons() {
         
-        descriptionTextView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 0).isActive  = true
-        descriptionTextView.leftAnchor.constraint(equalTo: refImageView.rightAnchor, constant: 5).isActive = true
-        descriptionTextView.rightAnchor.constraint(equalTo: baseView.rightAnchor, constant: -5).isActive = true
+        descriptionTextView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 2).isActive  = true
+        descriptionTextView.leftAnchor.constraint(equalTo: titleLabel.leftAnchor).isActive = true
+        descriptionTextView.rightAnchor.constraint(equalTo: titleLabel.rightAnchor).isActive = true
         // descriptionTextView.bottomAnchor.constraint(equalTo: self.refImageView.topAnchor).isActive = true
     }
 
-  
+    
    
 
    
@@ -132,63 +138,76 @@ class TableViewCell: UITableViewCell {
 extension TableViewCell {
     
     
+    
+    
+    func setData(data : Animals) {
+        titleLabel.text = data.title
+        descriptionTextView.text = data.description
+        parseImg(url: data.imageHref)
+        
+    }
+    
+
     func parseImg(url: String?){
+        
+        guard let url = url else {
+           
+            return
+        }
+        
         
         let activityIndicator = UIActivityIndicatorView()
         
         imageUrlString = url
         self.refImageView.image = nil
         
-        if let refimagUrl = url {
-            
-            
-            // setup activityIndicator...
-            activityIndicator.color = .darkGray
-            
-            addSubview(activityIndicator)
-            activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-            activityIndicator.centerXAnchor.constraint(equalTo: refImageView.centerXAnchor).isActive = true
-            activityIndicator.centerYAnchor.constraint(equalTo: refImageView.centerYAnchor).isActive = true
-            activityIndicator.startAnimating()
-            
-            
-            if let image = imageCache.object(forKey: url as AnyObject) as? UIImage{
-                if self.imageUrlString == url {
-                    self.refImageView.image = image
-                    activityIndicator.stopAnimating()
-                }
-                
-                
+         
+        // setup activityIndicator...
+        activityIndicator.color = .darkGray
+        
+        addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerXAnchor.constraint(equalTo: refImageView.centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: refImageView.centerYAnchor).isActive = true
+        activityIndicator.startAnimating()
+        
+        
+        if let image = viewModel.imageCache.object(forKey: url as AnyObject) as? UIImage{
+            if self.imageUrlString == url {
+                self.refImageView.image = image
+                activityIndicator.stopAnimating()
             }
-            URLSession.shared.dataTask(with: URL(string: refimagUrl)!, completionHandler: {(data, response, error) -> Void in
-                
-                if error != nil {
-                    print(error as Any)
-                    DispatchQueue.main.async(execute: {
-                        activityIndicator.stopAnimating()
-                    })
-                    return
-                }
-                
-                
-                DispatchQueue.main.async(execute: {
-                    
-                    if let unwrappedData = data, let imageToCache = UIImage(data: unwrappedData) {
-                        self.imageCache.setObject(imageToCache, forKey: url as AnyObject)
-                        if self.imageUrlString == url {
-                            self.refImageView.image = imageToCache
-                        }
-                        
-                        
-                    }
-                    activityIndicator.stopAnimating()
-                })
-            }).resume()
-            
-            
             
             
         }
+        
+        
+        viewModel.getImageData(imageUrl: url, completion: { [weak self]  data in
+            guard let self = self else {return}
+            DispatchQueue.main.async(execute: {
+                
+                switch data {
+                case .failure(let _):
+                    
+                    activityIndicator.stopAnimating()
+                    
+                case .success(let dta) :
+                   
+                    
+                    if let imageToCache = UIImage(data: dta){
+                        self.viewModel.imageCache.setObject(imageToCache, forKey: url as AnyObject)
+                        self.refImageView.image = imageToCache
+                    }
+                    activityIndicator.stopAnimating()
+                }
+                
+                
+            })
+            
+            
+            
+        })
+        
     }
     
 }
